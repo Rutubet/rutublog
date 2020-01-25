@@ -19,31 +19,11 @@ follwing are from [Apache License 2.0](https://www.apache.org/licenses/LICENSE-2
 identifier                n.     标志符
 ```
 
-<style>
-.tooltip {
-    position: relative;
-    display: inline-block;
-    border-bottom: 1px dotted black; 
-}
-.tooltip .tooltiptext {
-    visibility: hidden;
-    width: 120px;
-    background-color: black;
-    color: #fff;
-    text-align: center;
-    padding: 5px 0;
-    border-radius: 6px;
 
-    position: absolute;
-    z-index: 1;
-}
 
-.tooltip:hover .tooltiptext {
-    visibility: visible;
-}
-</style>
 
-<div class="tooltip">鼠标移动到这
+
+<div class="tooltip" style="style.css">鼠标移动到这
   <span class="tooltiptext">提示文本</span>
 </div>
 
