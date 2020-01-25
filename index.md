@@ -20,9 +20,12 @@ identifier                n.     标志符
 
 ```
 
-identifier
+
+这个[^identifier].
 
 [^identifier]: n. 标志符
+创建脚注格式类似这样 [^RUNOOB]。
 
+[^RUNOOB]: 菜鸟教程 -- 学的不仅是技术，更是梦想！！！
 
 
