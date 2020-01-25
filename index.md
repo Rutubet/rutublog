@@ -20,6 +20,8 @@ identifier                n.     标志符
 
 ```
 
+identifier
+
 [^identifier]: n. 标志符
 
 
