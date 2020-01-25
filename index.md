@@ -20,12 +20,61 @@ identifier                n.     标志符
 
 ```
 
-
 这个[^identifier].
 
-[^identifier]: n. 标志符
 创建脚注格式类似这样 [^RUNOOB]。
 
+test
+
+test
+
+stes
+
+test
+
+tse
+
+et
+
+t
+
+tsetse
+
+ets
+
+set
+
+es
+
+set
+
+sete
+
+st
+
+et
+
+set
+
+est
+
+s
+
+est
+
+est
+
+estset
+
+est
+
+est
+
+est
+
+set
+
+[^identifier]: n. 标志符
 [^RUNOOB]: 菜鸟教程 -- 学的不仅是技术，更是梦想！！！
 
 
