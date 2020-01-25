@@ -17,64 +17,33 @@ follwing are from [Apache License 2.0](https://www.apache.org/licenses/LICENSE-2
 
 ```
 identifier                n.     标志符
-
 ```
 
-这个[^identifier].
+<style>
+.tooltip {
+    position: relative;
+    display: inline-block;
+    border-bottom: 1px dotted black; 
+}
+.tooltip .tooltiptext {
+    visibility: hidden;
+    width: 120px;
+    background-color: black;
+    color: #fff;
+    text-align: center;
+    padding: 5px 0;
+    border-radius: 6px;
 
-创建脚注格式类似这样 [^RUNOOB]。
+    position: absolute;
+    z-index: 1;
+}
 
-test
+.tooltip:hover .tooltiptext {
+    visibility: visible;
+}
+</style>
 
-test
-
-stes
-
-test
-
-tse
-
-et
-
-t
-
-tsetse
-
-ets
-
-set
-
-es
-
-set
-
-sete
-
-st
-
-et
-
-set
-
-est
-
-s
-
-est
-
-est
-
-estset
-
-est
-
-est
-
-est
-
-set
-
-[^identifier]: n. 标志符
-[^RUNOOB]: 菜鸟教程 -- 学的不仅是技术，更是梦想！！！
-
+<div class="tooltip">鼠标移动到这
+  <span class="tooltiptext">提示文本</span>
+</div>
 
