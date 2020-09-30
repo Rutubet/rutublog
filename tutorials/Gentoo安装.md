@@ -1,5 +1,9 @@
 # Gentoo AMD64 安装
 
+[^2020/9/30]: 最后更新时间
+
+[TOC]
+
 本安装只适用于amd64架构 UEFI固件 的安装
 
 选择方面：
@@ -26,6 +30,15 @@
 
 校验文件
 
+```bash
+# 获取公钥
+gpg --keyserver hkps://hkps.pool.sks-keyservers.net --recv-keys 0xBB572E0E2D182910
+# 将输出的密钥指纹与 https://www.gentoo.org/downloads/signatures/ 比对
+gpg --verify stage3-amd64-<release>.tar.?(bz2|xz){.DIGESTS.asc,}
+# 校验hash
+grep -A 1 -i sha512 stage3-amd64-<release>.tar.?(bz2|xz){.DIGESTS.asc,} | sha512sum -c
+```
+
 刻录光盘
 
 启动安装媒介
@@ -40,12 +53,16 @@
 
 ### 准备磁盘
 
+参考分区
+
 | 分区 | 大小             | 文件系统     | Name   | Flags     |
 | ---- | ---------------- | :----------- | ------ | --------- |
 | 1    | 2M               | (bootloader) | grub   | bios_grub |
 | 2    | 256M             | fat32        | boot   | boot      |
 | 3    | 1024M            | (swap)       | swap   |           |
 | 4    | Rest of the disk | ext4         | rootfs |           |
+
+设置分区
 
 ```bash
 parted -a optimal /dev/sda
@@ -64,6 +81,11 @@ parted -a optimal /dev/sda
 > set 2 boot on
 > print
 > quit
+```
+
+挂载文件系统
+
+```bash
 mkfs.fat -F 32 /dev/sda2
 mkswap /dev/sda3
 swapon /dev/sda3
@@ -71,7 +93,7 @@ mkfs.ext4 /dev/sda4
 mount /dev/sda4 /mnt/gentoo
 ```
 
-
+至此，分区信息应该完全吻合下表
 
 | 分区 | 大小             | 文件系统     | Name   | Flags     |
 | ---- | ---------------- | :----------- | ------ | --------- |
@@ -84,9 +106,10 @@ mount /dev/sda4 /mnt/gentoo
 
 设置正确的日期时间
 
-> ntpd -q -g
->
-> date
+```bash
+ntpd -q -g
+date
+```
 
 下载stage3
 
@@ -94,15 +117,16 @@ mount /dev/sda4 /mnt/gentoo
 cd /mnt/gentoo
 #选择镜像站进入/releases/amd64/autobuilds/current-stage3-amd64/ 下载
 links https://www.gentoo.org/downloads/mirrors/
-# 校验
-openssl dgst -r -sha512 stage3-amd64-<release>.tar.?(bz2|xz) > sha512.hash
-openssl dgst -r -whirlpool stage3-amd64-<release>.tar.?(bz2|xz) > whirlpool.hash
-# to be continued
-gpg --verify stage3-amd64-<release>.tar.?(bz2|xz){.DIGESTS.asc,} 
+# 校验 参照上文
+# 解压
 tar xpvf stage3-*.tar.bz2 --xattrs-include='*.*' --numeric-owner
 ```
 
-配置/mnt/gentoo/etc/portage/make.conf
+## 配置基本系统
+
+### 配置portage
+
+/mnt/gentoo/etc/portage/make.conf 文件应该增加的内容
 
 ```bash
 # GCC
@@ -129,18 +153,39 @@ VIDEO_CARDS="intel i965 nvidia"
 GRUB_PLATFORMS="efi-64"
 ```
 
-配置/mnt/gentoo/etc/portage/repos.conf/gentoo.conf
+创建 /mnt/gentoo/etc/portage/repos.conf/gentoo.conf 文件并写入以下内容
 
 ```bash
 [gentoo]
 location = /usr/portage
 sync-type = rsync
 sync-uri = rsync://mirrors.tuna.tsinghua.edu.cn/gentoo-portage/
-#sync-uri = rsync://rsync.mirrors.ustc.edu.cn/gentoo-portage/
 auto-sync = yes
 ```
 
+### chroot
 
+
+
+若chroot之后要关机，暂停安装，输入：
+
+```bash
+exit
+cd
+umount -l /mnt/gentoo/dev{/shm,/pts,}
+umount -R /mnt/gentoo
+# 无法卸载时，输入以下命令查看信息
+fuser -mv /mnt
+poweroff
+```
+
+若要继续安装，引导进入LiveCD之后挂载，然后进行正常chroot步骤
+
+```bash
+mount /dev/sda4 /mnt/gentoo
+```
+
+正常chroot步骤
 
 ```bash
 # 复制DNS信息
@@ -157,20 +202,11 @@ source /etc/profile
 export PS1="(chroot) ${PS1}"
 # 挂载boot分区(不一定是/dev/sda2)
 mount /dev/sda2 /boot
-
-# 若要暂停安装
-exit
-cd
-umount -l /mnt/gentoo/dev{/shm,/pts,}
-umount -R /mnt/gentoo
-reboot # poweroff
-
-# 若要继续安装
-mount /dev/sda4 /mnt/gentoo
-然后继续复制DNS信息等步骤
 ```
 
-## 配置基本系统
+
+
+至此chroot完毕，可以中断安装并稍后恢复到安装中以弹性确定安装时间
 
 ```bash
 emerge-webrsync
@@ -211,4 +247,26 @@ UUID=x  /mnt/cdrom   auto    noauto,user          0 0
 
 ## 配置内核
 
+```bash
+emerge -av gentoo-sources
+emerge -av genkernel
+genkernel --menuconfig all
+genkernel --install initramfs
+```
+
+
+
 ## 配置bootloader
+
+```bash
+grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=Gentoo
+grub-mkconfig -o /boot/grub/grub.cfg
+```
+
+## 收尾工作
+
+```bash
+useradd -m -G users,wheel,portage,usb,video 这里换成你的用户名(小写)
+passwd 用户名
+```
+
