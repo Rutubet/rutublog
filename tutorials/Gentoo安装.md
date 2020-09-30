@@ -1,6 +1,6 @@
 # Gentoo AMD64 安装
 
-[^2020/9/30]: 最后更新时间
+`2020/9/30`
 
 [TOC]
 
@@ -165,8 +165,6 @@ auto-sync = yes
 
 ### chroot
 
-
-
 若chroot之后要关机，暂停安装，输入：
 
 ```bash
@@ -204,9 +202,9 @@ export PS1="(chroot) ${PS1}"
 mount /dev/sda2 /boot
 ```
 
-
-
 至此chroot完毕，可以中断安装并稍后恢复到安装中以弹性确定安装时间
+
+### 基本配置
 
 ```bash
 emerge-webrsync
@@ -253,8 +251,6 @@ emerge -av genkernel
 genkernel --menuconfig all
 genkernel --install initramfs
 ```
-
-
 
 ## 配置bootloader
 
